@@ -15,7 +15,9 @@ class Client:
     Client for accessing everything
     """
 
-    def __init__(self, sesh: aiohttp.ClientSession = None, auto_accept: bool = False) -> None:
+    def __init__(
+        self, sesh: aiohttp.ClientSession = None, auto_accept: bool = False
+    ) -> None:
         """
         Initiation of the client
         """
@@ -24,12 +26,13 @@ class Client:
         self.sessions: Dict[str, session.Session] = {}
         self.auto_accept = auto_accept
 
-
     async def request(self, method: str, url: str, **kwargs) -> Dict:
         """
         Make a request to the API
         """
-        async with self.sesh.request(method, f"https://api.endlessmedical.com/v1/dx{url}", **kwargs) as response:
+        async with self.sesh.request(
+            method, f"https://api.endlessmedical.com/v1/dx{url}", **kwargs
+        ) as response:
             data = await response.json()
             return data
 
@@ -45,7 +48,6 @@ class Client:
         """
         self.sessions = {}
 
-
     async def create_session(self, default: bool = False) -> session.Session:
         """
         Create a session and return it
@@ -53,4 +55,4 @@ class Client:
         if default:
             return session.Session("default", default=True)
         response = await self.request("POST", "/InitSession")
-        return session.Session(response["SessionID"])
+        return session.Session(self.loop, response["SessionID"])
